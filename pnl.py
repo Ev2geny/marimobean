@@ -191,23 +191,25 @@ def _(Path, beancount_file, load_file, load_string, printer):
     REPO = "hoostus/marimobean"
     BRANCH = "main"
 
-    import requests
-
-    def runs_in_molab() -> bool:
+    def check_if_runs_in_molab() -> bool:
         """
         Heuristic to determine if we're running in the molab environment. 
         We want to do this because in the molab environment, the beancount file is not available, 
         and we will need to download it from github.
         """
-        cwd = Path.cwd()
-        # List the names of the files and folders in the current directory
-        names = {p.name for p in cwd.iterdir()}
-        return {
+    
+        EXPECTED_IN_MOLAB_NAMES: set[str] = {
             "__marimo__",
             "lock.txt",
             "notebook.py",
             "pyproject.toml",
-        }.issubset(names)
+        } 
+    
+        cwd = Path.cwd()
+        # List the names of the files and folders in the current directory
+        found_names: set[str] = {p.name for p in cwd.iterdir()}
+
+        return EXPECTED_IN_MOLAB_NAMES.issubset(found_names)
 
 
     def fetch_github_text(path_in_repo, repo=REPO, branch=BRANCH) -> str:
@@ -217,9 +219,10 @@ def _(Path, beancount_file, load_file, load_string, printer):
         r.raise_for_status()
         return r.text
 
-    runs_in_molab: bool = runs_in_molab()
+    check_if_runs_in_molab: bool = check_if_runs_in_molab()
 
-    if runs_in_molab:
+    if check_if_runs_in_molab:
+        import requests
         beancount_file_string = fetch_github_text(beancount_file)
         entries, _errors, options = load_string(beancount_file_string)
     else:
@@ -256,15 +259,6 @@ def _():
         printer,
         run_bql_query,
     )
-
-
-@app.cell
-def _(Path):
-    root = Path.cwd()
-
-    files = sorted(p.name for p in root.iterdir())
-    files
-    return
 
 
 if __name__ == "__main__":
