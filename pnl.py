@@ -1,3 +1,16 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "altair>=6.0.0",
+#     "beancount>=3.2.0",
+#     "beanquery>=0.2.0",
+#     "great-tables>=0.21.0",
+#     "marimo>=0.20.4",
+#     "polars>=1.39.0",
+#     "python-dateutil>=2.9.0.post0",
+#     "requests>=2.31.0",
+# ]
+# ///
 import marimo
 
 __generated_with = "0.20.4"
