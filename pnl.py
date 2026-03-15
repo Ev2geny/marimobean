@@ -8,9 +8,10 @@
 #     "marimo>=0.20.4",
 #     "polars>=1.39.0",
 #     "python-dateutil>=2.9.0.post0",
-#     "requests>=2.31.0",
+#     "requests>=2.32.0",
 # ]
 # ///
+
 import marimo
 
 __generated_with = "0.20.4"
@@ -199,6 +200,7 @@ def _(Path, beancount_file, load_file, load_string, printer):
         and we will need to download it from github.
         """
         cwd = Path.cwd()
+        # List the names of the files and folders in the current directory
         names = {p.name for p in cwd.iterdir()}
         return {
             "__marimo__",
