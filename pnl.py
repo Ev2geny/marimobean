@@ -192,7 +192,26 @@ def _():
     from pathlib import Path
 
     home_dir = Path.home()
-    return alt, datetime, dateutil, load_file, mo, pl, printer, run_bql_query
+    return (
+        Path,
+        alt,
+        datetime,
+        dateutil,
+        load_file,
+        mo,
+        pl,
+        printer,
+        run_bql_query,
+    )
+
+
+@app.cell
+def _(Path):
+    root = Path.cwd()
+
+    files = sorted(p.name for p in root.iterdir())
+    files
+    return
 
 
 if __name__ == "__main__":
