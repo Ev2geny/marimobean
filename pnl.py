@@ -15,7 +15,7 @@
 import marimo
 
 __generated_with = "0.20.4"
-app = marimo.App(width="medium")
+app = marimo.App(layout = "app", width="medium")
 
 
 @app.cell(hide_code=True)
@@ -197,14 +197,14 @@ def _(Path, beancount_file, load_file, load_string, printer):
         We want to do this because in the molab environment, the beancount file is not available, 
         and we will need to download it from github.
         """
-    
+
         EXPECTED_IN_MOLAB_NAMES: set[str] = {
             "__marimo__",
             "lock.txt",
             "notebook.py",
             "pyproject.toml",
         } 
-    
+
         cwd = Path.cwd()
         # List the names of the files and folders in the current directory
         found_names: set[str] = {p.name for p in cwd.iterdir()}
