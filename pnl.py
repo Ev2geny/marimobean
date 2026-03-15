@@ -171,8 +171,45 @@ def _(entries, options, pl, run_bql_query):
 
 
 @app.cell(hide_code=True)
-def _(beancount_file, load_file, printer):
-    entries, _errors, options = load_file(beancount_file)
+def _(Path, beancount_file, load_file, load_string, printer):
+    # loading the beancount file 
+
+    REPO = "hoostus/marimobean"
+    BRANCH = "main"
+
+    import requests
+
+    def runs_in_molab() -> bool:
+        """
+        Heuristic to determine if we're running in the molab environment. 
+        We want to do this because in the molab environment, the beancount file is not available, 
+        and we will need to download it from github.
+        """
+        cwd = Path.cwd()
+        names = {p.name for p in cwd.iterdir()}
+        return {
+            "__marimo__",
+            "lock.txt",
+            "notebook.py",
+            "pyproject.toml",
+        }.issubset(names)
+
+
+    def fetch_github_text(path_in_repo, repo=REPO, branch=BRANCH) -> str:
+        """ Fetches the text content of a file in a github repo. """
+        url = f"https://raw.githubusercontent.com/{repo}/{branch}/{path_in_repo}"
+        r = requests.get(url)
+        r.raise_for_status()
+        return r.text
+
+    runs_in_molab: bool = runs_in_molab()
+
+    if runs_in_molab:
+        beancount_file_string = fetch_github_text(beancount_file)
+        entries, _errors, options = load_string(beancount_file_string)
+    else:
+        entries, _errors, options = load_file(beancount_file)
+
     printer.print_errors(_errors)
     return entries, options
 
@@ -183,7 +220,7 @@ def _():
     import altair as alt
     import polars as pl
 
-    from beancount.loader import load_file
+    from beancount.loader import load_file, load_string
     from beancount.parser import printer
     from beanquery.query import run_query as run_bql_query
 
@@ -198,6 +235,7 @@ def _():
         datetime,
         dateutil,
         load_file,
+        load_string,
         mo,
         pl,
         printer,
